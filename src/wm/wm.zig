@@ -301,7 +301,11 @@ pub const WindowManager = struct {
     pub fn populateBarBlocks(self: *WindowManager, bar: *Bar) void {
         if (self.config.blocks.items.len > 0) {
             for (self.config.blocks.items) |cfg_block| {
-                bar.addBlock(configBlockToBarBlock(cfg_block));
+                if (cfg_block.block_type == .systray) {
+                    bar.setSystrayConfig(cfg_block.underline, cfg_block.color);
+                } else {
+                    bar.addBlock(configBlockToBarBlock(cfg_block));
+                }
             }
         } else {
             bar.addBlock(blocks_mod.Block.initRam("", 5, 0x7aa2f7, true));
@@ -597,5 +601,6 @@ pub fn configBlockToBarBlock(cfg: config_mod.Block) blocks_mod.Block {
             cfg.color,
             cfg.underline,
         ),
+        .systray => blocks_mod.Block.initStatic("", 0, false),
     };
 }

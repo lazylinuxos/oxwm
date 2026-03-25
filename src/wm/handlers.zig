@@ -30,6 +30,7 @@ pub fn handleEvent(event: *xlib.XEvent, wm: *WindowManager) void {
         .motion_notify => handleMotionNotify(&event.xmotion, wm),
         .client_message => handleClientMessage(&event.xclient, wm),
         .button_press => handleButtonPress(&event.xbutton, wm),
+        .button_release => handleButtonRelease(&event.xbutton, wm),
         .expose => handleExpose(&event.xexpose, wm),
         .property_notify => handlePropertyNotify(&event.xproperty, wm),
         .mapping_notify => handleMappingNotify(&event.xmapping, wm),
@@ -207,6 +208,10 @@ fn handleExpose(event: *xlib.XExposeEvent, wm: *WindowManager) void {
 
 fn handleButtonPress(event: *xlib.XButtonEvent, wm: *WindowManager) void {
     std.debug.print("button_press: window=0x{x} subwindow=0x{x}\n", .{ event.window, event.subwindow });
+
+    if (wm.getSystray()) |tray| {
+        if (tray.handleButtonPress(event)) return;
+    }
 
     const clicked_monitor = monitor_mod.windowToMonitor(wm, event.window);
     if (clicked_monitor) |monitor| {
@@ -434,5 +439,11 @@ fn handleResizeRequest(event: *xlib.XResizeRequestEvent, wm: *WindowManager) voi
         if (tray.handleResizeRequest(event.window, event.width, event.height)) {
             wm.invalidateBars();
         }
+    }
+}
+
+fn handleButtonRelease(event: *xlib.XButtonEvent, wm: *WindowManager) void {
+    if (wm.getSystray()) |tray| {
+        _ = tray.handleButtonRelease(event);
     }
 }

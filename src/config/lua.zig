@@ -291,6 +291,9 @@ fn registerBarModule(state: *c.lua_State) void {
     c.lua_pushcfunction(state, luaBarBlockBattery);
     c.lua_setfield(state, -2, "battery");
 
+    c.lua_pushcfunction(state, luaBarBlockSystray);
+    c.lua_setfield(state, -2, "systray");
+
     c.lua_setfield(state, -2, "block");
 
     c.lua_setfield(state, -2, "bar");
@@ -853,6 +856,8 @@ fn parseBlockConfig(state: *c.lua_State, idx: c_int) ?Block {
             c.lua_settop(state, -2);
         }
         c.lua_settop(state, -2);
+    } else if (std.mem.eql(u8, block_type_str, "Systray")) {
+        block.block_type = .systray;
     } else {
         return null;
     }
@@ -925,6 +930,12 @@ fn luaBarBlockStatic(state: ?*c.lua_State) callconv(.c) c_int {
     const text = getLuaString(s, -1);
     c.lua_settop(s, -2);
     createBlockTable(s, "Static", text);
+    return 1;
+}
+
+fn luaBarBlockSystray(state: ?*c.lua_State) callconv(.c) c_int {
+    const s = state orelse return 0;
+    createBlockTable(s, "Systray", null);
     return 1;
 }
 
