@@ -56,7 +56,7 @@ pub const Systray = struct {
         self.display = display;
         self.screen = screen;
         self.bar_height = bar_height;
-        self.icon_size = bar_height - 4;
+        self.icon_size = bar_height - 8;
         self.icons = .empty;
 
         self.net_system_tray_opcode = xlib.XInternAtom(display, "_NET_SYSTEM_TRAY_OPCODE", xlib.False);
@@ -449,5 +449,80 @@ pub const Systray = struct {
             if (icon.window == win) return true;
         }
         return false;
+    }
+
+    pub fn handleButtonPress(self: *Systray, ev: *xlib.XButtonEvent) bool {
+        if (ev.window != self.window) {
+            for (self.icons.items) |icon| {
+                if (icon.window == ev.window) {
+                    self.sendButtonEvent(icon.window, ev, true);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        const spacing: i32 = 4;
+        var x: i32 = 0;
+        for (self.icons.items) |icon| {
+            if (icon.mapped) {
+                if (ev.x >= x and ev.x < x + icon.width) {
+                    self.sendButtonEvent(icon.window, ev, true);
+                    return true;
+                }
+                x += icon.width + spacing;
+            }
+        }
+        return false;
+    }
+
+    pub fn handleButtonRelease(self: *Systray, ev: *xlib.XButtonEvent) bool {
+        if (ev.window != self.window) {
+            for (self.icons.items) |icon| {
+                if (icon.window == ev.window) {
+                    self.sendButtonEvent(icon.window, ev, false);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        const spacing: i32 = 4;
+        var x: i32 = 0;
+        for (self.icons.items) |icon| {
+            if (icon.mapped) {
+                if (ev.x >= x and ev.x < x + icon.width) {
+                    self.sendButtonEvent(icon.window, ev, false);
+                    return true;
+                }
+                x += icon.width + spacing;
+            }
+        }
+        return false;
+    }
+
+    fn sendButtonEvent(self: *Systray, win: xlib.Window, ev: *xlib.XButtonEvent, is_press: bool) void {
+        var event: xlib.c.XButtonEvent = undefined;
+        event.type = if (is_press) xlib.ButtonPress else xlib.ButtonRelease;
+        event.window = win;
+        event.root = xlib.XRootWindow(self.display, self.screen);
+        event.subwindow = xlib.None;
+        event.time = ev.time;
+        event.x = ev.x;
+        event.y = ev.y;
+        event.x_root = ev.x_root;
+        event.y_root = ev.y_root;
+        event.state = ev.state;
+        event.button = ev.button;
+        event.same_screen = xlib.True;
+
+        _ = xlib.XSendEvent(
+            self.display,
+            win,
+            xlib.False,
+            xlib.c.ButtonPressMask | xlib.c.ButtonReleaseMask,
+            @ptrCast(&event),
+        );
+        _ = xlib.XSync(self.display, xlib.False);
     }
 };

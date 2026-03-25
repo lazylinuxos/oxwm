@@ -44,6 +44,8 @@ pub const Bar = struct {
     needs_redraw: bool,
     next: ?*Bar,
     systray: ?*Systray,
+    systray_underline: bool,
+    systray_color: u32,
 
     /// Creates a bar window for `monitor` using the given config.
     /// Returns null on allocation failure or if the font cannot be loaded.
@@ -145,6 +147,8 @@ pub const Bar = struct {
             .needs_redraw = true,
             .next = null,
             .systray = systray,
+            .systray_underline = false,
+            .systray_color = 0xffffff,
         };
 
         monitor.bar_win = window;
@@ -169,6 +173,11 @@ pub const Bar = struct {
 
     pub fn addBlock(self: *Bar, block: Block) void {
         self.blocks.append(self.allocator, block) catch {};
+    }
+
+    pub fn setSystrayConfig(self: *Bar, underline: bool, col: u32) void {
+        self.systray_underline = underline;
+        self.systray_color = col;
     }
 
     pub fn clearBlocks(self: *Bar) void {
@@ -243,7 +252,11 @@ pub const Bar = struct {
         }
 
         if (self.systray) |tray| {
-            tray.updatePosition(self.width - systray_width - padding, 0);
+            const systray_x = self.width - systray_width - padding;
+            tray.updatePosition(systray_x, 0);
+            if (self.systray_underline and systray_width > 0) {
+                self.fillRect(display, systray_x, self.height - 2, systray_width, 2, self.systray_color);
+            }
         }
 
         _ = xlib.XCopyArea(display, self.pixmap, self.window, self.graphics_context, 0, 0, @intCast(self.width), @intCast(self.height), 0, 0);
