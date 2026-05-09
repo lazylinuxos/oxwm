@@ -420,6 +420,7 @@ pub const WindowManager = struct {
         var current_monitor = self.monitors;
         var last_bar: ?*Bar = null;
         var is_first_bar = true;
+        const want_systray = configHasSystray(self.config);
 
         while (current_monitor) |monitor| {
             const bar = Bar.create(
@@ -428,7 +429,7 @@ pub const WindowManager = struct {
                 self.display.screen,
                 monitor,
                 self.config,
-                is_first_bar,
+                is_first_bar and want_systray,
             ) orelse {
                 current_monitor = monitor.next;
                 continue;
@@ -720,6 +721,13 @@ pub const WindowManager = struct {
         }
     }
 };
+
+fn configHasSystray(config: Config) bool {
+    for (config.blocks.items) |block| {
+        if (block.block_type == .systray) return true;
+    }
+    return false;
+}
 
 /// Converts a config block description into a live status bar block.
 pub fn configBlockToBarBlock(cfg: config_mod.Block) blocks_mod.Block {

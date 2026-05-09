@@ -72,7 +72,6 @@ pub const Systray = struct {
 
         const current_owner = xlib.c.XGetSelectionOwner(display, self.manager_atom);
         if (current_owner != xlib.None) {
-            std.debug.print("systray: another systray is already running\n", .{});
             allocator.destroy(self);
             return null;
         }
@@ -102,7 +101,6 @@ pub const Systray = struct {
 
         _ = xlib.c.XSetSelectionOwner(display, self.manager_atom, self.window, xlib.CurrentTime);
         if (xlib.c.XGetSelectionOwner(display, self.manager_atom) != self.window) {
-            std.debug.print("systray: failed to acquire selection ownership\n", .{});
             _ = xlib.c.XDestroyWindow(display, self.window);
             allocator.destroy(self);
             return null;
@@ -125,7 +123,6 @@ pub const Systray = struct {
         _ = xlib.XMapWindow(display, self.window);
         _ = xlib.XSync(display, xlib.False);
 
-        std.debug.print("systray: initialized on screen {d}\n", .{screen});
         return self;
     }
 
@@ -272,7 +269,6 @@ pub const Systray = struct {
 
         var wa: xlib.XWindowAttributes = undefined;
         if (xlib.XGetWindowAttributes(self.display, icon_win, &wa) == 0) {
-            std.debug.print("systray: failed to get window attributes for icon 0x{x}\n", .{icon_win});
             return;
         }
 
@@ -315,7 +311,6 @@ pub const Systray = struct {
         }
 
         self.arrangeIcons();
-        std.debug.print("systray: docked icon 0x{x} (size {}x{})\n", .{ icon_win, icon.width, icon.height });
     }
 
     pub fn handleConfigureRequest(self: *Systray, ev: *xlib.XConfigureRequestEvent) bool {
@@ -403,7 +398,6 @@ pub const Systray = struct {
             if (icon.window == win) {
                 _ = self.icons.orderedRemove(i);
                 self.arrangeIcons();
-                std.debug.print("systray: removed icon 0x{x}\n", .{win});
                 return true;
             }
         }
