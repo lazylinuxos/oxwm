@@ -112,10 +112,14 @@ oxwm.set_tags(tags)
 -- Layouts
 -------------------------------------------------------------------------------
 -- Set custom symbols for layouts (displayed in the status bar)
--- Available layouts: "tiling", "normie" (floating), "grid", "monocle", "tabbed"
+-- Available layouts: "tiling", "normie" (floating), "grid", "monocle", "tabbed", "dwindle"
 oxwm.set_layout_symbol("tiling", "[T]")
 oxwm.set_layout_symbol("normie", "[F]")
 oxwm.set_layout_symbol("tabbed", "[=]")
+-- oxwm.set_layout_symbol("dwindle", "[\\]")
+
+-- Example: bind dwindle (fibonacci) layout
+-- oxwm.key.bind({ modkey }, "R", oxwm.layout.set("dwindle"))
 
 -- Set default layout of specific tag (tag_index, layout_name)
 -- Unset value uses oxwm.set_layout value

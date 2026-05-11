@@ -18,6 +18,7 @@ fn getLayoutSymbol(layout_index: u32, config: config_mod.Config) []const u8 {
         .floating => config.layout_floating_symbol,
         .scrolling => config.layout_scrolling_symbol,
         .grid => config.layout_grid_symbol,
+        .dwindle => config.layout_dwindle_symbol,
     };
 }
 
