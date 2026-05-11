@@ -46,17 +46,17 @@ function oxwm.auto_tile(enabled) end
 function oxwm.tiled_resize_mode(enabled) end
 
 ---Set layout symbol override
----@param name string Layout name (e.g., "tiling", "normie", "tabbed", "grid", "monocle")
----@param symbol string Symbol to display (e.g., "[T]", "[F]", "[=]")
+---@param name string Layout name (e.g., "tiling", "normie", "tabbed", "grid", "monocle", "dwindle")
+---@param symbol string Symbol to display (e.g., "[T]", "[F]", "[=]", "[\\]")
 function oxwm.set_layout_symbol(name, symbol) end
 
 ---Set default layout for all tags
----@param name string Layout name ("tiling", "floating", "scrolling", "grid", "monocle", or aliases: "tile", "float", "scroll", "normie")
+---@param name string Layout name ("tiling", "floating", "scrolling", "grid", "monocle", "dwindle", or aliases: "tile", "float", "scroll", "normie", "fib", "fibonacci")
 function oxwm.set_layout(name) end
 
 ---Set default layout for a specific tag
 ---@param tag integer Tag index (1-9)
----@param name string Layout name ("tiling", "floating", "scrolling", "grid", "monocle", or aliases)
+---@param name string Layout name ("tiling", "floating", "scrolling", "grid", "monocle", "dwindle", or aliases)
 function oxwm.set_tag_layout(tag, name) end
 
 ---Set floating window spawn position
@@ -213,7 +213,7 @@ oxwm.layout = {}
 function oxwm.layout.cycle() end
 
 ---Set specific layout
----@param name string Layout name (e.g., "tiling", "normie", "tabbed", "grid", "monocle", "scrolling")
+---@param name string Layout name (e.g., "tiling", "normie", "tabbed", "grid", "monocle", "scrolling", "dwindle")
 ---@return table Action table for keybinding
 function oxwm.layout.set(name) end
 

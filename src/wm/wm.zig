@@ -17,6 +17,7 @@ const monocle = @import("../layouts/monocle.zig");
 const floating = @import("../layouts/floating.zig");
 const scrolling = @import("../layouts/scrolling.zig");
 const grid = @import("../layouts/grid.zig");
+const dwindle = @import("../layouts/dwindle.zig");
 
 pub const core = @import("core.zig");
 pub const actions = @import("actions.zig");
@@ -167,6 +168,7 @@ pub const WindowManager = struct {
         &floating.layout,
         &scrolling.layout,
         &grid.layout,
+        &dwindle.layout,
     };
 
     fn initMonitor(self: *WindowManager, mon: *Monitor, num: usize, x: i16, y: i16, w: c_int, h: c_int) void {
@@ -267,12 +269,14 @@ pub const WindowManager = struct {
                 new_mon.lt[2] = &floating.layout;
                 new_mon.lt[3] = &scrolling.layout;
                 new_mon.lt[4] = &grid.layout;
+                new_mon.lt[5] = &dwindle.layout;
                 for (0..10) |i| {
                     new_mon.pertag.ltidxs[i][0] = new_mon.lt[0];
                     new_mon.pertag.ltidxs[i][1] = new_mon.lt[1];
                     new_mon.pertag.ltidxs[i][2] = new_mon.lt[2];
                     new_mon.pertag.ltidxs[i][3] = new_mon.lt[3];
                     new_mon.pertag.ltidxs[i][4] = new_mon.lt[4];
+                    new_mon.pertag.ltidxs[i][5] = new_mon.lt[5];
                 }
                 if (last) |l| {
                     l.next = new_mon;
@@ -356,6 +360,7 @@ pub const WindowManager = struct {
                 mon.lt[2] = &floating.layout;
                 mon.lt[3] = &scrolling.layout;
                 mon.lt[4] = &grid.layout;
+                mon.lt[5] = &dwindle.layout;
                 self.monitors = mon;
                 self.selected_monitor = mon;
             }

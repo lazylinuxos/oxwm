@@ -88,6 +88,7 @@ pub const Layouts = enum(u32) {
     floating,
     scrolling,
     grid,
+    dwindle,
 
     pub fn fromString(name: []const u8) ?Layouts {
         if (std.meta.stringToEnum(Layouts, name)) |v| return v;
@@ -95,6 +96,8 @@ pub const Layouts = enum(u32) {
         if (std.mem.eql(u8, name, "normie")) return .floating;
         if (std.mem.eql(u8, name, "float")) return .floating;
         if (std.mem.eql(u8, name, "scroll")) return .scrolling;
+        if (std.mem.eql(u8, name, "fib")) return .dwindle;
+        if (std.mem.eql(u8, name, "fibonacci")) return .dwindle;
         return null;
     }
 };
@@ -208,6 +211,7 @@ pub const Config = struct {
     layout_floating_symbol: []const u8 = "><>",
     layout_scrolling_symbol: []const u8 = "[S]",
     layout_grid_symbol: []const u8 = "[#]",
+    layout_dwindle_symbol: []const u8 = "[\\]",
 
     scheme_normal: ColorScheme = .{ .foreground = 0xbbbbbb, .background = 0x1a1b26, .border = 0x444444 },
     scheme_selected: ColorScheme = .{ .foreground = 0x0db9d7, .background = 0x1a1b26, .border = 0xad8ee6 },

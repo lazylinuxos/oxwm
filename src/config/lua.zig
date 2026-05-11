@@ -1147,6 +1147,7 @@ fn luaSetLayoutSymbol(state: ?*c.lua_State) callconv(.c) c_int {
         .floating => cfg.layout_floating_symbol = symbol,
         .scrolling => cfg.layout_scrolling_symbol = symbol,
         .grid => cfg.layout_grid_symbol = symbol,
+        .dwindle => cfg.layout_dwindle_symbol = symbol,
     }
     return 0;
 }
