@@ -8,6 +8,7 @@ pub const CpuTemp = struct {
     color: c_ulong,
     cached_path: [128]u8,
     cached_path_len: usize,
+    detection_attempted: bool,
 
     pub fn init(
         format: []const u8,
@@ -22,6 +23,7 @@ pub const CpuTemp = struct {
             .color = color,
             .cached_path = undefined,
             .cached_path_len = 0,
+            .detection_attempted = false,
         };
     }
 
@@ -82,10 +84,11 @@ pub const CpuTemp = struct {
     }
 
     pub fn content(self: *CpuTemp, io: std.Io, buffer: []u8) []const u8 {
-        if (self.cached_path_len == 0) {
+        if (!self.detection_attempted) {
             self.detectPath(io);
-            if (self.cached_path_len == 0) return buffer[0..0];
+            self.detection_attempted = true;
         }
+        if (self.cached_path_len == 0) return buffer[0..0];
 
         const path = self.cached_path[0..self.cached_path_len];
         const file = std.Io.Dir.openFileAbsolute(io, path, .{}) catch return buffer[0..0];

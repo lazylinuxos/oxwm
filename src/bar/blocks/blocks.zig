@@ -108,7 +108,8 @@ pub const Block = struct {
         const interval_secs = self.interval();
         if (interval_secs == 0) return false;
 
-        const now = std.Io.Timestamp.now(io, .real).toSeconds();
+        // .awake (monotonic) for interval bookkeeping, not .real (wall-clock) — std.Io rework gives us a clock enum now, and a wall-clock backstep would stretch intervals.
+        const now = std.Io.Timestamp.now(io, .awake).toSeconds();
         if (now - self.last_update < @as(i64, @intCast(interval_secs))) {
             return false;
         }
